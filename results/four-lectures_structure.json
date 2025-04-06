@@ -2,80 +2,78 @@
   "doc_name": "four-lectures.pdf",
   "structure": [
     {
-      "title": "Four Lectures on Standard ML",
+      "title": "Preface",
       "start_index": 1,
       "end_index": 1,
+      "node_id": "0000"
+    },
+    {
+      "title": "ML at a Glance",
+      "start_index": 2,
+      "end_index": 2,
       "nodes": [
         {
-          "title": "ML at a Glance",
+          "title": "An ML session",
           "start_index": 2,
-          "end_index": 2,
-          "nodes": [
-            {
-              "title": "An ML session",
-              "start_index": 2,
-              "end_index": 3,
-              "node_id": "0002"
-            },
-            {
-              "title": "Types and Values",
-              "start_index": 3,
-              "end_index": 4,
-              "node_id": "0003"
-            },
-            {
-              "title": "Recursive Functions",
-              "start_index": 4,
-              "end_index": 4,
-              "node_id": "0004"
-            },
-            {
-              "title": "Raising Exceptions",
-              "start_index": 4,
-              "end_index": 5,
-              "node_id": "0005"
-            },
-            {
-              "title": "Structures",
-              "start_index": 5,
-              "end_index": 6,
-              "node_id": "0006"
-            },
-            {
-              "title": "Signatures",
-              "start_index": 6,
-              "end_index": 7,
-              "node_id": "0007"
-            },
-            {
-              "title": "Coercive Signature Matching",
-              "start_index": 7,
-              "end_index": 8,
-              "node_id": "0008"
-            },
-            {
-              "title": "Functor Declaration",
-              "start_index": 8,
-              "end_index": 9,
-              "node_id": "0009"
-            },
-            {
-              "title": "Functor Application",
-              "start_index": 9,
-              "end_index": 9,
-              "node_id": "0010"
-            },
-            {
-              "title": "Summary",
-              "start_index": 9,
-              "end_index": 9,
-              "node_id": "0011"
-            }
-          ],
-          "node_id": "0001"
+          "end_index": 3,
+          "node_id": "0002"
+        },
+        {
+          "title": "Types and Values",
+          "start_index": 3,
+          "end_index": 4,
+          "node_id": "0003"
+        },
+        {
+          "title": "Recursive Functions",
+          "start_index": 4,
+          "end_index": 4,
+          "node_id": "0004"
+        },
+        {
+          "title": "Raising Exceptions",
+          "start_index": 4,
+          "end_index": 5,
+          "node_id": "0005"
+        },
+        {
+          "title": "Structures",
+          "start_index": 5,
+          "end_index": 6,
+          "node_id": "0006"
+        },
+        {
+          "title": "Signatures",
+          "start_index": 6,
+          "end_index": 7,
+          "node_id": "0007"
+        },
+        {
+          "title": "Coercive Signature Matching",
+          "start_index": 7,
+          "end_index": 8,
+          "node_id": "0008"
+        },
+        {
+          "title": "Functor Declaration",
+          "start_index": 8,
+          "end_index": 9,
+          "node_id": "0009"
+        },
+        {
+          "title": "Functor Application",
+          "start_index": 9,
+          "end_index": 9,
+          "node_id": "0010"
+        },
+        {
+          "title": "Summary",
+          "start_index": 9,
+          "end_index": 9,
+          "node_id": "0011"
         }
       ],
-      "node_id": "0000"
+      "node_id": "0001"
     },
     {
       "title": "Programming with ML Modules",
@@ -266,14 +264,70 @@
     {
       "title": "Appendix A: The Bare Interpreter",
       "start_index": 44,
-      "end_index": 52,
+      "end_index": 44,
+      "nodes": [
+        {
+          "title": "Syntax",
+          "start_index": 44,
+          "end_index": 44,
+          "node_id": "0043"
+        },
+        {
+          "title": "Parsing",
+          "start_index": 44,
+          "end_index": 45,
+          "node_id": "0044"
+        },
+        {
+          "title": "Environments",
+          "start_index": 45,
+          "end_index": 45,
+          "node_id": "0045"
+        },
+        {
+          "title": "Evaluation",
+          "start_index": 45,
+          "end_index": 46,
+          "node_id": "0046"
+        },
+        {
+          "title": "Type Checking",
+          "start_index": 46,
+          "end_index": 46,
+          "node_id": "0047"
+        },
+        {
+          "title": "The Interpreter",
+          "start_index": 46,
+          "end_index": 47,
+          "node_id": "0048"
+        },
+        {
+          "title": "The Evaluator",
+          "start_index": 47,
+          "end_index": 48,
+          "node_id": "0049"
+        },
+        {
+          "title": "The Typechecker",
+          "start_index": 48,
+          "end_index": 49,
+          "node_id": "0050"
+        },
+        {
+          "title": "The Basics",
+          "start_index": 50,
+          "end_index": 52,
+          "node_id": "0051"
+        }
+      ],
       "node_id": "0042"
     },
     {
       "title": "Appendix B: Files",
       "start_index": 53,
       "end_index": 53,
-      "node_id": "0043"
+      "node_id": "0052"
     }
   ]
 }
