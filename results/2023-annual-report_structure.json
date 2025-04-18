@@ -164,7 +164,7 @@
     {
       "title": "Appendixes",
       "start_index": 107,
-      "end_index": 108,
+      "end_index": 109,
       "node_id": "0025"
     },
     {
@@ -207,7 +207,7 @@
         {
           "title": "Meeting Minutes",
           "start_index": 147,
-          "end_index": 148,
+          "end_index": 149,
           "node_id": "0032"
         }
       ],
@@ -325,13 +325,31 @@
         {
           "title": "Federal Reserve open market transactions, 2023",
           "start_index": 187,
-          "end_index": 188,
+          "end_index": 187,
           "nodes": [
             {
-              "title": "Federal Reserve open market transactions, 2023\u2014continued",
-              "start_index": 188,
+              "title": "Type of security and transaction",
+              "start_index": 187,
               "end_index": 188,
               "node_id": "0051"
+            },
+            {
+              "title": "Federal agency obligations",
+              "start_index": 188,
+              "end_index": 188,
+              "node_id": "0052"
+            },
+            {
+              "title": "Mortgage-backed securities",
+              "start_index": 188,
+              "end_index": 188,
+              "node_id": "0053"
+            },
+            {
+              "title": "Temporary transactions",
+              "start_index": 188,
+              "end_index": 188,
+              "node_id": "0054"
             }
           ],
           "node_id": "0050"
@@ -339,162 +357,90 @@
         {
           "title": "Federal Reserve Bank holdings of U.S. Treasury and federal agency securities, December 31, 2021\u201323",
           "start_index": 189,
-          "end_index": 190,
+          "end_index": 189,
           "nodes": [
             {
-              "title": "Federal Reserve Bank holdings of U.S. Treasury and federal agency securities, December 31, 2021\u201323\u2014continued",
+              "title": "By remaining maturity",
+              "start_index": 189,
+              "end_index": 189,
+              "node_id": "0056"
+            },
+            {
+              "title": "By type",
+              "start_index": 189,
+              "end_index": 190,
+              "node_id": "0057"
+            },
+            {
+              "title": "By issuer",
               "start_index": 190,
               "end_index": 190,
-              "node_id": "0053"
+              "node_id": "0058"
             }
           ],
-          "node_id": "0052"
+          "node_id": "0055"
         },
         {
           "title": "Reserve requirements of depository institutions, December 31, 2023",
           "start_index": 191,
           "end_index": 191,
-          "node_id": "0054"
+          "node_id": "0059"
         },
         {
           "title": "Banking offices and banks affiliated with bank holding companies in the United States, December 31, 2022 and 2023",
           "start_index": 192,
           "end_index": 192,
-          "node_id": "0055"
+          "node_id": "0060"
         },
         {
           "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1984\u20132023 and month-end 2023",
           "start_index": 193,
-          "end_index": 194,
-          "nodes": [
-            {
-              "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1984\u20132023 and month-end 2023\u2014continued",
-              "start_index": 194,
-              "end_index": 194,
-              "node_id": "0057"
-            },
-            {
-              "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1984\u20132023 and month-end 2023\u2014continued",
-              "start_index": 195,
-              "end_index": 196,
-              "node_id": "0058"
-            },
-            {
-              "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1984\u20132023 and month-end 2023\u2014continued",
-              "start_index": 196,
-              "end_index": 196,
-              "node_id": "0059"
-            }
-          ],
-          "node_id": "0056"
+          "end_index": 196,
+          "node_id": "0061"
         },
         {
           "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1918\u20131983",
           "start_index": 197,
-          "end_index": 198,
-          "nodes": [
-            {
-              "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1918\u20131983\u2014continued",
-              "start_index": 198,
-              "end_index": 198,
-              "node_id": "0061"
-            },
-            {
-              "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1918\u20131983\u2014continued",
-              "start_index": 199,
-              "end_index": 200,
-              "node_id": "0062"
-            },
-            {
-              "title": "Reserves of depository institutions, Federal Reserve Bank credit, and related items, year-end 1918\u20131983\u2014continued",
-              "start_index": 200,
-              "end_index": 200,
-              "node_id": "0063"
-            }
-          ],
-          "node_id": "0060"
+          "end_index": 200,
+          "node_id": "0062"
         },
         {
           "title": "Principal assets and liabilities of insured commercial banks, by class of bank, June 30, 2023 and 2022",
           "start_index": 201,
           "end_index": 201,
-          "node_id": "0064"
+          "node_id": "0063"
         },
         {
           "title": "Initial margin requirements under Regulations T, U, and X",
           "start_index": 202,
           "end_index": 203,
-          "node_id": "0065"
+          "node_id": "0064"
         },
         {
           "title": "Statement of condition of the Federal Reserve Banks, by Bank, December 31, 2023 and 2022",
           "start_index": 203,
-          "end_index": 204,
-          "nodes": [
-            {
-              "title": "Statement of condition of the Federal Reserve Banks, by Bank, December 31, 2023 and 2022\u2014continued",
-              "start_index": 204,
-              "end_index": 206,
-              "node_id": "0067"
-            },
-            {
-              "title": "Statement of condition of the Federal Reserve Banks, by Bank, December 31, 2023 and 2022\u2014continued",
-              "start_index": 206,
-              "end_index": 206,
-              "node_id": "0068"
-            },
-            {
-              "title": "Statement of condition of the Federal Reserve Banks, by Bank, December 31, 2023 and 2022\u2014continued",
-              "start_index": 206,
-              "end_index": 207,
-              "node_id": "0069"
-            },
-            {
-              "title": "Statement of condition of the Federal Reserve Banks, by Bank, December 31, 2023 and 2022\u2014continued",
-              "start_index": 207,
-              "end_index": 208,
-              "node_id": "0070"
-            },
-            {
-              "title": "Statement of condition of the Federal Reserve Banks, by Bank, December 31, 2023 and 2022\u2014continued",
-              "start_index": 208,
-              "end_index": 209,
-              "node_id": "0071"
-            }
-          ],
-          "node_id": "0066"
+          "end_index": 209,
+          "node_id": "0065"
         },
         {
           "title": "Statement of condition of the Federal Reserve Banks, December 31, 2023 and 2022",
           "start_index": 209,
           "end_index": 210,
-          "node_id": "0072"
+          "node_id": "0066"
         },
         {
           "title": "Income and expenses of the Federal Reserve Banks, by Bank, 2023",
           "start_index": 210,
-          "end_index": 211,
+          "end_index": 212,
           "nodes": [
             {
               "title": "Income and expenses of the Federal Reserve Banks, by Bank, 2023\u2014continued",
-              "start_index": 211,
-              "end_index": 212,
-              "node_id": "0074"
-            },
-            {
-              "title": "Income and expenses of the Federal Reserve Banks, by Bank, 2023\u2014continued",
               "start_index": 212,
-              "end_index": 213,
-              "node_id": "0075"
-            },
-            {
-              "title": "Income and expenses of the Federal Reserve Banks, by Bank, 2023\u2014continued",
-              "start_index": 213,
               "end_index": 214,
-              "node_id": "0076"
+              "node_id": "0068"
             }
           ],
-          "node_id": "0073"
+          "node_id": "0067"
         },
         {
           "title": "Income and expenses of the Federal Reserve Banks, 1914\u20132023",
@@ -505,40 +451,40 @@
               "title": "Income and expenses of the Federal Reserve Banks, 1914\u20132023\u2014continued",
               "start_index": 215,
               "end_index": 216,
-              "node_id": "0078"
+              "node_id": "0070"
             },
             {
               "title": "Income and expenses of the Federal Reserve Banks, 1914\u20132023\u2014continued",
               "start_index": 216,
               "end_index": 217,
-              "node_id": "0079"
+              "node_id": "0071"
             },
             {
               "title": "Income and expenses of the Federal Reserve Banks, 1914\u20132023\u2014continued",
               "start_index": 217,
               "end_index": 217,
-              "node_id": "0080"
+              "node_id": "0072"
             }
           ],
-          "node_id": "0077"
+          "node_id": "0069"
         },
         {
           "title": "Operations in principal departments of the Federal Reserve Banks, 2020\u201323",
           "start_index": 218,
           "end_index": 218,
-          "node_id": "0081"
+          "node_id": "0073"
         },
         {
           "title": "Number and annual salaries of officers and employees of the Federal Reserve Banks, December 31, 2023",
           "start_index": 219,
-          "end_index": 219,
-          "node_id": "0082"
+          "end_index": 220,
+          "node_id": "0074"
         },
         {
           "title": "Acquisition costs and net book value of the premises of the Federal Reserve Banks and Branches, December 31, 2023",
           "start_index": 220,
           "end_index": 222,
-          "node_id": "0083"
+          "node_id": "0075"
         }
       ],
       "node_id": "0049"
