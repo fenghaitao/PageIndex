@@ -145,9 +145,42 @@ async def merge_linked_html_to_pdf(index_file_path, pdf_output_path=None, pdf_op
                         with open(css_path, 'r', encoding='utf-8') as css_file:
                             all_css.append(css_file.read())
     
-    # Add combined CSS
+    # Add combined CSS with additional styles to fix navigation overlap
     if all_css:
         combined_html += '<style>' + '\n'.join(all_css) + '</style>'
+    
+    # Add custom CSS to fix navigation layout issues
+    combined_html += '''
+    <style>
+    /* Fix navigation elements that might overlap */
+    .chain, .path, .breadcrumb, .nav-path, .navbar, .navigation {
+        clear: both !important;
+        margin-bottom: 15px !important;
+        display: block !important;
+        float: none !important;
+        position: relative !important;
+    }
+    
+    /* Ensure proper spacing between navigation elements */
+    .chain + .path, .path + .chain {
+        margin-top: 10px !important;
+    }
+    
+    /* Fix any floating issues */
+    .merged-nav-wrapper {
+        clear: both !important;
+        display: block !important;
+        margin-bottom: 15px !important;
+        overflow: hidden !important;
+    }
+    
+    /* Ensure section divs have proper spacing */
+    div[id^="section-"] {
+        clear: both !important;
+        margin-top: 40px !important;
+    }
+    </style>
+    '''
     
     combined_html += '</head><body>'
     
