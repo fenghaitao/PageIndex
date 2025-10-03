@@ -2,6 +2,7 @@ import tiktoken
 import openai
 import logging
 import os
+import re
 from datetime import datetime
 import time
 import json
@@ -16,13 +17,36 @@ import logging
 import yaml
 from pathlib import Path
 from types import SimpleNamespace as config
+try:
+    import litellm
+    LITELLM_AVAILABLE = True
+except ImportError:
+    LITELLM_AVAILABLE = False
+    print("Warning: litellm not available. GitHub Copilot models will not be supported.")
 
 CHATGPT_API_KEY = os.getenv("CHATGPT_API_KEY")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # optional; LiteLLM handles OAuth2 by default
+
+
+def _model_for_tiktoken(model: str):
+    """Normalize model name for tiktoken.encoding_for_model.
+
+    If a GitHub Copilot model is passed like "github_copilot/gpt-4o",
+    strip the provider prefix so tiktoken sees "gpt-4o".
+    """
+    if not model:
+        return model
+    try:
+        if isinstance(model, str) and model.startswith("github_copilot/"):
+            return model.split('/', 1)[1]
+    except Exception:
+        pass
+    return model
 
 def count_tokens(text, model=None):
     if not text:
         return 0
-    enc = tiktoken.encoding_for_model(model)
+    enc = tiktoken.encoding_for_model(_model_for_tiktoken(model))
     tokens = enc.encode(text)
     return len(tokens)
 
@@ -106,8 +130,221 @@ async def ChatGPT_API_async(model, prompt, api_key=CHATGPT_API_KEY):
             else:
                 logging.error('Max retries reached for prompt: ' + prompt)
                 return "Error"  
+
+
+def is_github_copilot_model(model):
+    """Check if the model is a GitHub Copilot model."""
+    return model.startswith("github_copilot/")
+
+
+def LiteLLM_API_with_finish_reason(model, prompt, api_key=None, chat_history=None):
+    """
+    LiteLLM API call with finish reason support for GitHub Copilot models.
+    """
+    if not LITELLM_AVAILABLE:
+        raise ImportError("litellm is not available. Please install it to use GitHub Copilot models.")
+    
+    max_retries = 10
+    
+    # LiteLLM handles GitHub Copilot authentication (OAuth2). Do not enforce GITHUB_TOKEN here.
+    
+    for i in range(max_retries):
+        try:
+            if chat_history:
+                messages = chat_history.copy()
+                messages.append({"role": "user", "content": prompt})
+            else:
+                messages = [{"role": "user", "content": prompt}]
             
+            # If this is a GitHub Copilot model, include editor/header hints
+            extra_headers = {}
+            if is_github_copilot_model(model):
+                extra_headers.update({
+                    "Editor-Version": "vscode/1.85.0",
+                    "Copilot-Integration-Id": "vscode-chat",
+                })
+
+            # Choose temperature: use 1 for certain GPT-5 Copilot models
+            temperature = 0
+            if model in ("github_copilot/gpt-5-mini", "github_copilot/gpt-5"):
+                temperature = 1
+
+            response = litellm.completion(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                api_key=api_key,
+                extra_headers=extra_headers if extra_headers else None,
+            )
             
+            if response.choices[0].finish_reason == "length":
+                return response.choices[0].message.content, "max_output_reached"
+            else:
+                return response.choices[0].message.content, "finished"
+
+        except Exception as e:
+            print('************* Retrying *************')
+            logging.error(f"Error: {e}")
+            if i < max_retries - 1:
+                time.sleep(1)  # Wait for 1s before retrying
+            else:
+                logging.error('Max retries reached for prompt: ' + prompt)
+                return "Error", "error"
+
+
+def LiteLLM_API(model, prompt, api_key=None, chat_history=None):
+    """
+    LiteLLM API call for GitHub Copilot models.
+    """
+    if not LITELLM_AVAILABLE:
+        raise ImportError("litellm is not available. Please install it to use GitHub Copilot models.")
+    
+    max_retries = 10
+    
+    # LiteLLM handles GitHub Copilot authentication (OAuth2). Do not enforce GITHUB_TOKEN here.
+    
+    for i in range(max_retries):
+        try:
+            if chat_history:
+                messages = chat_history.copy()
+                messages.append({"role": "user", "content": prompt})
+            else:
+                messages = [{"role": "user", "content": prompt}]
+            
+            extra_headers = {}
+            if is_github_copilot_model(model):
+                extra_headers.update({
+                    "Editor-Version": "vscode/1.85.0",
+                    "Copilot-Integration-Id": "vscode-chat",
+                })
+
+            # Choose temperature: use 1 for certain GPT-5 Copilot models
+            temperature = 0
+            if model in ("github_copilot/gpt-5-mini", "github_copilot/gpt-5"):
+                temperature = 1
+
+            response = litellm.completion(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                api_key=api_key,
+                extra_headers=extra_headers if extra_headers else None,
+            )
+   
+            return response.choices[0].message.content
+        except Exception as e:
+            print('************* Retrying *************')
+            logging.error(f"Error: {e}")
+            if i < max_retries - 1:
+                time.sleep(1)  # Wait for 1s before retrying
+            else:
+                logging.error('Max retries reached for prompt: ' + prompt)
+                return "Error"
+
+
+async def LiteLLM_API_async(model, prompt, api_key=None):
+    """
+    Async LiteLLM API call for GitHub Copilot models.
+    """
+    if not LITELLM_AVAILABLE:
+        raise ImportError("litellm is not available. Please install it to use GitHub Copilot models.")
+    
+    max_retries = 10
+    messages = [{"role": "user", "content": prompt}]
+    
+    # LiteLLM handles GitHub Copilot authentication (OAuth2). Do not enforce GITHUB_TOKEN here.
+    
+    for i in range(max_retries):
+        try:
+            extra_headers = {}
+            if is_github_copilot_model(model):
+                extra_headers.update({
+                    "Editor-Version": "vscode/1.85.0",
+                    "Copilot-Integration-Id": "vscode-chat",
+                })
+
+            # Choose temperature: use 1 for certain GPT-5 Copilot models
+            temperature = 0
+            if model in ("github_copilot/gpt-5-mini", "github_copilot/gpt-5"):
+                temperature = 1
+
+            response = await litellm.acompletion(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                api_key=api_key,
+                extra_headers=extra_headers if extra_headers else None,
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print('************* Retrying *************')
+            logging.error(f"Error: {e}")
+            if i < max_retries - 1:
+                await asyncio.sleep(1)  # Wait for 1s before retrying
+            else:
+                logging.error('Max retries reached for prompt: ' + prompt)
+                return "Error"
+
+
+def get_api_function(model, use_litellm=False):
+    """
+    Get the appropriate API function based on the model and configuration.
+    """
+    if use_litellm or is_github_copilot_model(model):
+        return LiteLLM_API
+    else:
+        return ChatGPT_API
+
+
+def get_api_function_with_finish_reason(model, use_litellm=False):
+    """
+    Get the appropriate API function with finish reason based on the model and configuration.
+    """
+    if use_litellm or is_github_copilot_model(model):
+        return LiteLLM_API_with_finish_reason
+    else:
+        return ChatGPT_API_with_finish_reason
+
+
+def get_api_function_async(model, use_litellm=False):
+    """
+    Get the appropriate async API function based on the model and configuration.
+    """
+    if use_litellm or is_github_copilot_model(model):
+        return LiteLLM_API_async
+    else:
+        return ChatGPT_API_async
+
+
+async def run_tasks_sequentially(tasks, return_exceptions=False, concurrency=3):
+    """Run an iterable of awaitable tasks with a bounded concurrency.
+
+    By default this will allow up to 3 concurrent tasks (to avoid hitting
+    provider rate limits while still keeping some parallelism).
+
+    Args:
+        tasks: iterable of awaitables (coroutines)
+        return_exceptions: if True, exceptions are captured and returned in the
+            results list instead of being raised.
+        concurrency: maximum number of concurrent tasks to run at once.
+
+    Returns:
+        list of results (or exceptions if return_exceptions=True)
+    """
+    sem = asyncio.Semaphore(concurrency)
+
+    async def _run_with_sem(coro):
+        async with sem:
+            return await coro
+
+    wrappers = [_run_with_sem(c) for c in tasks]
+
+    if return_exceptions:
+        return await asyncio.gather(*wrappers, return_exceptions=True)
+    else:
+        return await asyncio.gather(*wrappers)
+
+
 def get_json_content(response):
     start_idx = response.find("```json")
     if start_idx != -1:
@@ -411,7 +648,7 @@ def add_preface_if_needed(data):
 
 
 def get_page_tokens(pdf_path, model="gpt-4o-2024-11-20", pdf_parser="PyPDF2"):
-    enc = tiktoken.encoding_for_model(model)
+    enc = tiktoken.encoding_for_model(_model_for_tiktoken(model))
     if pdf_parser == "PyPDF2":
         pdf_reader = PyPDF2.PdfReader(pdf_path)
         page_list = []
@@ -609,14 +846,14 @@ async def generate_node_summary(node, model=None):
     
     Directly return the description, do not include any other text.
     """
-    response = await ChatGPT_API_async(model, prompt)
+    response = await smart_api_call_async(model, prompt)
     return response
 
 
 async def generate_summaries_for_structure(structure, model=None):
     nodes = structure_to_list(structure)
     tasks = [generate_node_summary(node, model=model) for node in nodes]
-    summaries = await asyncio.gather(*tasks)
+    summaries = await run_tasks_sequentially(tasks, return_exceptions=False)
     
     for node, summary in zip(nodes, summaries):
         node['summary'] = summary
@@ -654,7 +891,7 @@ def generate_doc_description(structure, model=None):
     
     Directly return the description, do not include any other text.
     """
-    response = ChatGPT_API(model, prompt)
+    response = smart_api_call(model, prompt)
     return response
 
 
@@ -710,3 +947,48 @@ class ConfigLoader:
         self._validate_keys(user_dict)
         merged = {**self._default_dict, **user_dict}
         return config(**merged)
+
+
+def smart_api_call(model, prompt, api_key=None, chat_history=None, use_litellm=None):
+    """
+    Smart API call that automatically selects between OpenAI and LiteLLM based on model.
+    """
+    if use_litellm is None:
+        use_litellm = is_github_copilot_model(model)
+    
+    api_function = get_api_function(model, use_litellm)
+    
+    if use_litellm:
+        return api_function(model, prompt, api_key, chat_history)
+    else:
+        return api_function(model, prompt, api_key or CHATGPT_API_KEY, chat_history)
+
+
+def smart_api_call_with_finish_reason(model, prompt, api_key=None, chat_history=None, use_litellm=None):
+    """
+    Smart API call with finish reason that automatically selects between OpenAI and LiteLLM based on model.
+    """
+    if use_litellm is None:
+        use_litellm = is_github_copilot_model(model)
+    
+    api_function = get_api_function_with_finish_reason(model, use_litellm)
+    
+    if use_litellm:
+        return api_function(model, prompt, api_key, chat_history)
+    else:
+        return api_function(model, prompt, api_key or CHATGPT_API_KEY, chat_history)
+
+
+async def smart_api_call_async(model, prompt, api_key=None, use_litellm=None):
+    """
+    Smart async API call that automatically selects between OpenAI and LiteLLM based on model.
+    """
+    if use_litellm is None:
+        use_litellm = is_github_copilot_model(model)
+    
+    api_function = get_api_function_async(model, use_litellm)
+    
+    if use_litellm:
+        return await api_function(model, prompt, api_key)
+    else:
+        return await api_function(model, prompt, api_key or CHATGPT_API_KEY)

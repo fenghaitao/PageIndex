@@ -1,4 +1,7 @@
-model: "gpt-4o-2024-11-20"
+# LiteLLM configuration for GitHub Copilot models
+# Use "github_copilot/gpt-4o" for GitHub Copilot models
+use_litellm: true  # Set to true to use LiteLLM instead of OpenAI client
+model: "github_copilot/gpt-4o"
 toc_check_page_num: 20
 max_page_num_each_node: 10
 max_token_num_each_node: 20000

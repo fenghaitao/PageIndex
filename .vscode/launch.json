@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Python: Run run_pageindex.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_pageindex.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--help"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Debug run_pageindex (example args)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_pageindex.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "--pdf_path",
+                "${workspaceFolder}/drm.pdf",
+                "--model",
+                "github_copilot/gpt-4o"
+            ],
+            "env": {
+                "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
+            },
+            "envFile": "${workspaceFolder}/.env",
+            "justMyCode": false
+        }
+    ]
+}
