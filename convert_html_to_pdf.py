@@ -186,64 +186,9 @@ async def merge_linked_html_to_pdf(index_file_path, pdf_output_path=None, pdf_op
                         # If there's an issue with path resolution, keep the original link
                         pass
             
-            # Find and remove duplicate navigation elements that might overlap
-            # Look for common navigation patterns and preserve only the essential content
+            # Extract and add body content
             body = file_soup.find('body')
             if body:
-                # Look for navigation elements that might be repeated (e.g., prev/next buttons)
-                # Remove navigation divs that might cause overlap
-                nav_selectors = [
-                    '.nav', '.navigation', '.nav-links', '.prev-next', 
-                    '.header-navigation', '.footer-navigation', '.chapter-nav',
-                    '.topnav', '.sidenav', '.prev', '.next', '.uplink', '.breadcrumb'
-                ]
-                
-                for selector in nav_selectors:
-                    nav_elements = body.select(selector)
-                    for nav_elem in nav_elements:
-                        nav_elem.extract()  # Remove from document completely
-                
-                # Remove navigation elements by tag names that might contain prev/next links
-                for tag_name in ['nav', 'header', 'footer']:
-                    nav_tags = body.find_all(tag_name)
-                    for nav_tag in nav_tags:
-                        # Only remove if it contains navigation-related text
-                        text_content = nav_tag.get_text().lower()
-                        if any(keyword in text_content for keyword in ['prev', 'previous', 'next', 'toc', 'index', 'up:']):
-                            nav_tag.extract()
-                
-                # Remove any links that seem to be navigation related (containing prev/next text)
-                for link in body.find_all('a', href=True):
-                    link_text = link.get_text().lower().strip()
-                    if any(keyword in link_text for keyword in ['prev', 'previous', 'next', 'toc', 'index', '&laquo;', '&raquo;', '<<', '>>', 
-                                                               'back', 'forward', 'up:', 'table of contents']):
-                        link.extract()
-                
-                # Replace navigation with clean internal links based on document order
-                if i > 0 or i < len(all_files) - 1:  # If not first or last
-                    nav_html = '<div class="clean-nav" style="background-color: #f9f9f9; padding: 10px; margin: 0 0 20px 0; text-align: center; border: 1px solid #ddd; clear: both;">'
-                    
-                    if i > 0:  # Has previous
-                        prev_anchor = file_to_anchor[all_files[i-1]]
-                        nav_html += f'<a href="#{prev_anchor}" style="margin-right: 20px; text-decoration: none; color: #2196F3; font-weight: bold;">← Previous</a>'
-                    else:
-                        nav_html += '<span style="margin-right: 20px; color: #aaa;">← Previous</span>'  # Disabled
-                    
-                    # Add "ToC" link to return to the first section
-                    nav_html += f'<a href="#section-0" style="margin: 0 20px; text-decoration: none; color: #2196F3; font-weight: bold;">↑ Index</a>'
-                    
-                    if i < len(all_files) - 1:  # Has next
-                        next_anchor = file_to_anchor[all_files[i+1]]
-                        nav_html += f'<a href="#{next_anchor}" style="margin-left: 20px; text-decoration: none; color: #2196F3; font-weight: bold;">Next →</a>'
-                    else:
-                        nav_html += '<span style="margin-left: 20px; color: #aaa;">Next →</span>'  # Disabled
-                    
-                    nav_html += '</div>'
-                    
-                    # Add this clean navigation to the top of the section
-                    body.insert(0, BeautifulSoup(nav_html, 'html.parser'))
-                
-                # Extract and add body content
                 body_content = str(body.decode_contents())
                 # Add a separator between documents
                 if i > 0:
