@@ -405,6 +405,10 @@ def calculate_page_offset(pairs):
     return most_common
 
 def add_page_offset_to_toc_json(data, offset):
+    # If offset is None, we cannot add it - skip offset addition
+    if offset is None:
+        return data
+    
     for i in range(len(data)):
         if data[i].get('page') is not None and isinstance(data[i]['page'], int):
             data[i]['physical_index'] = data[i]['page'] + offset
@@ -632,6 +636,10 @@ def process_toc_with_page_numbers(toc_content, toc_page_list, page_list, toc_che
 
     offset = calculate_page_offset(matching_pairs)
     logger.info(f'offset: {offset}')
+    
+    if offset is None:
+        logger.info('Warning: Could not calculate page offset from matching pairs. Page numbers in TOC may not be accurate.')
+        print('Warning: Could not calculate page offset from matching pairs.')
 
     toc_with_page_number = add_page_offset_to_toc_json(toc_with_page_number, offset)
     logger.info(f'toc_with_page_number: {toc_with_page_number}')
