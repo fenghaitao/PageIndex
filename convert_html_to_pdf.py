@@ -67,14 +67,92 @@ async def convert_html_to_pdf(html_file_path, pdf_output_path=None, pdf_options=
         await converter.close()
 
 
-async def merge_linked_html_to_pdf(index_file_path, pdf_output_path=None, pdf_options=None):
+def collect_linked_html_files_recursive(start_file_path, max_depth=10):
     """
-    Follow all links in an index HTML file and merge all content into a single PDF.
+    Recursively collect all linked HTML files starting from a root file.
+    
+    Args:
+        start_file_path (str or Path): Path to the starting HTML file
+        max_depth (int): Maximum recursion depth to prevent infinite loops
+    
+    Returns:
+        list: Ordered list of unique HTML file paths
+    """
+    start_path = Path(start_file_path).resolve()
+    visited = set()
+    ordered_files = []
+    
+    def extract_links_from_file(file_path, depth=0):
+        """Recursively extract links from an HTML file."""
+        if depth > max_depth:
+            print(f"Warning: Max depth {max_depth} reached, stopping recursion")
+            return
+        
+        file_path = Path(file_path).resolve()
+        file_str = str(file_path)
+        
+        # Skip if already visited
+        if file_str in visited:
+            return
+        
+        # Mark as visited and add to ordered list
+        visited.add(file_str)
+        ordered_files.append(file_str)
+        
+        # Parse the file to extract links
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            soup = BeautifulSoup(content, 'html.parser')
+            
+            # Collect all links in the order they appear
+            for link in soup.find_all('a', href=True):
+                href = link['href']
+                
+                # Skip external links, anchors, and special protocols
+                if href.startswith(('http:', 'https:', 'mailto:', '#', 'javascript:', 'tel:', 'ftp:')):
+                    continue
+                
+                # Remove fragment identifiers (anchors) from the path
+                if '#' in href:
+                    href = href.split('#')[0]
+                
+                # Skip empty hrefs after removing anchors
+                if not href:
+                    continue
+                
+                # Make relative paths absolute
+                try:
+                    abs_path = (file_path.parent / href).resolve()
+                    
+                    # Check if the file exists and is an HTML file
+                    if abs_path.exists() and abs_path.is_file():
+                        if abs_path.suffix.lower() in ['.html', '.htm']:
+                            # Recursively process this linked file
+                            extract_links_from_file(abs_path, depth + 1)
+                except Exception as e:
+                    print(f"Warning: Could not resolve link '{href}' from {file_path}: {e}")
+                    continue
+        
+        except Exception as e:
+            print(f"Warning: Error reading file {file_path}: {e}")
+    
+    # Start the recursive extraction
+    extract_links_from_file(start_path, depth=0)
+    
+    return ordered_files
+
+
+async def merge_linked_html_to_pdf(index_file_path, pdf_output_path=None, pdf_options=None, max_depth=10):
+    """
+    Follow all links in an index HTML file recursively and merge all content into a single PDF.
     
     Args:
         index_file_path (str or Path): Path to the index HTML file
         pdf_output_path (str or Path, optional): Path for the output PDF file
         pdf_options (dict, optional): Options for PDF generation
+        max_depth (int, optional): Maximum recursion depth for following links (default: 10)
     
     Returns:
         bytes: PDF content if no output path is provided
@@ -98,28 +176,10 @@ async def merge_linked_html_to_pdf(index_file_path, pdf_output_path=None, pdf_op
             }
         }
     
-    # Parse the index file to extract links in order
-    with open(index_file_path, 'r', encoding='utf-8') as f:
-        index_content = f.read()
+    # Recursively collect all linked HTML files
+    all_files = collect_linked_html_files_recursive(index_path, max_depth=max_depth)
     
-    soup = BeautifulSoup(index_content, 'html.parser')
-    
-    # Collect all unique links from the index file in the order they appear
-    links = []
-    for link in soup.find_all('a', href=True):
-        href = link['href']
-        # Skip external links and anchors
-        if href.startswith(('http', 'https', 'mailto:', '#', 'javascript:')):
-            continue
-        # Make relative paths absolute
-        abs_path = (index_path.parent / href).resolve()
-        if abs_path.exists() and str(abs_path) not in links:
-            links.append(str(abs_path))
-    
-    # Add the index file itself as the first item, then all linked files in order
-    all_files = [str(index_path.resolve())] + [link for link in links if Path(link).exists()]
-    
-    print(f"Found {len(all_files)} HTML files to merge: {all_files}")
+    print(f"Found {len(all_files)} HTML files across multiple hierarchy levels to merge")
     
     # Create a temporary HTML file that combines all content
     combined_html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
@@ -405,7 +465,9 @@ async def main():
         print("Usage: python convert_html_to_pdf.py <html_file_path> [pdf_output_path]")
         print("   or: python convert_html_to_pdf.py <html_directory> [output_directory]")
         print("   or: python convert_html_to_pdf.py --create-sample <sample_file_path>")
-        print("   or: python convert_html_to_pdf.py --merge-linked <index_html_file> [pdf_output_path]")
+        print("   or: python convert_html_to_pdf.py --merge-linked <index_html_file> [pdf_output_path] [--max-depth=N]")
+        print("\nOptions for --merge-linked:")
+        print("  --max-depth=N  Maximum recursion depth for following links (default: 10)")
         return
     
     command = sys.argv[1]
@@ -430,8 +492,18 @@ async def main():
             return
         
         output_path = None
-        if len(sys.argv) > 3:
-            output_path = sys.argv[3]
+        max_depth = 10  # Default max depth
+        
+        # Parse additional arguments
+        for i in range(3, len(sys.argv)):
+            arg = sys.argv[i]
+            if arg.startswith('--max-depth='):
+                try:
+                    max_depth = int(arg.split('=')[1])
+                except ValueError:
+                    print(f"Warning: Invalid max-depth value '{arg}', using default: 10")
+            else:
+                output_path = arg
         
         # Define PDF options
         pdf_options = {
@@ -445,7 +517,7 @@ async def main():
             }
         }
         
-        await merge_linked_html_to_pdf(index_path, output_path, pdf_options)
+        await merge_linked_html_to_pdf(index_path, output_path, pdf_options, max_depth=max_depth)
         return
     
     # Define PDF options
